@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"gorm.io/gorm"
+	"loginUserGo/infrastructure/crypto"
 	"loginUserGo/infrastructure/database"
 	"loginUserGo/infrastructure/database/db_postgres"
 	"loginUserGo/infrastructure/jwt"
@@ -19,6 +20,7 @@ type ContainerDI struct {
 	UserService    service.UserService
 	UserHandler    handler.UserHandler
 	JwtToken       jwt.TokenJwt
+	CryptoPassword crypto.CryptoPassword
 }
 
 func NewContainerDI(config Config) *ContainerDI {
@@ -37,18 +39,19 @@ func NewContainerDI(config Config) *ContainerDI {
 	container.DB = db_postgres.InitGorm(&configDB)
 	container.Migration = migrations.NewDatabaseMakeMigrations(container.DB)
 
-	container.buildJwt()
+	container.buildValidation()
 	container.build()
 	return container
 }
 
-func (c *ContainerDI) buildJwt() {
+func (c *ContainerDI) buildValidation() {
 	c.JwtToken = jwt.NewTokenJwt(c.Config.AccessSecret)
+	c.CryptoPassword = crypto.NewCryptoPassword(c.Config.AccessSecret)
 }
 
 func (c *ContainerDI) build() {
 	c.UserRepository = repository.NewUserRepository(c.DB)
-	c.UserService = service.NewUserService(c.UserRepository, c.JwtToken)
+	c.UserService = service.NewUserService(c.UserRepository, c.JwtToken, c.CryptoPassword)
 	c.UserHandler = handler.NewUserHandler(c.UserService)
 }
 

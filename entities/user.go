@@ -20,7 +20,6 @@ func (u User) ToDomain(data request.User) User {
 		ID:        uuidGenerator.String(),
 		Name:      data.Name,
 		Login:     data.Login,
-		Password:  data.Password,
 		Email:     data.Email,
 		Cellphone: data.Cellphone,
 	}
@@ -33,7 +32,6 @@ type Login struct {
 
 func (l Login) ToDomain(data request.Login) Login {
 	return Login{
-		Login:    data.Login,
-		Password: data.Password,
+		Login: data.Login,
 	}
 }

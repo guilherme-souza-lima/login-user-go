@@ -16,18 +16,30 @@ type JwtToken interface {
 	Create(id, name, login, email, cellphone string) (string, error)
 }
 
+type CryptoPassword interface {
+	Encrypt(password string) (string, error)
+	Decrypt(crypt string) (string, error)
+}
+
 type UserService struct {
 	UserRepository UserRepository
 	JwtToken       JwtToken
+	CryptoPassword CryptoPassword
 }
 
-func NewUserService(UserRepository UserRepository, JwtToken JwtToken) UserService {
-	return UserService{UserRepository, JwtToken}
+func NewUserService(UserRepository UserRepository, JwtToken JwtToken, CryptoPassword CryptoPassword) UserService {
+	return UserService{UserRepository, JwtToken, CryptoPassword}
 }
 
 func (u UserService) Create(data request.User) error {
 	var entity entities.User
 	result := entity.ToDomain(data)
+
+	newPassword, err := u.CryptoPassword.Encrypt(data.Password)
+	if err != nil {
+		return err
+	}
+	result.Password = newPassword
 	return u.UserRepository.Create(result)
 }
 
@@ -35,6 +47,12 @@ func (u UserService) Login(data request.Login) (response.UserLogin, error) {
 	var entity entities.Login
 	var login response.UserLogin
 	result := entity.ToDomain(data)
+
+	newPassword, errCrypto := u.CryptoPassword.Encrypt(data.Password)
+	if errCrypto != nil {
+		return login, errCrypto
+	}
+	result.Password = newPassword
 
 	user, err := u.UserRepository.Login(result)
 	if err != nil {
