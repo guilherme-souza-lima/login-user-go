@@ -3,10 +3,12 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"loginUserGo/user_case/request"
+	"loginUserGo/user_case/response"
 )
 
 type UserService interface {
 	Create(data request.User) error
+	Login(data request.Login) (response.UserLogin, error)
 }
 
 type UserHandler struct {
@@ -26,4 +28,21 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON("Error service user. Error: " + err.Error())
 	}
 	return c.Status(fiber.StatusOK).JSON("success")
+}
+
+func (u UserHandler) LoginUser(c *fiber.Ctx) error {
+	var user request.Login
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON("Error body parser request. Error: " + err.Error())
+	}
+	if user.Login == "" || user.Password == "" {
+		return c.Status(fiber.StatusNotFound).JSON("Error field not filled. Error: username or password")
+	}
+
+	result, err := u.UserService.Login(user)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON("Error: " + err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }

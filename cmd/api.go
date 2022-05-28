@@ -32,7 +32,7 @@ func StartHttp(ctx context.Context, containerDI *infrastructure.ContainerDI) {
 	}))
 
 	app.Post("/user", containerDI.UserHandler.CreateUser)
-
+	app.Post("/login", containerDI.UserHandler.LoginUser)
 	err := app.Listen(":8080")
 	if err != nil {
 		panic(err)

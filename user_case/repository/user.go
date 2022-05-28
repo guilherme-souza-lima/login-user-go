@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"loginUserGo/entities"
+	"loginUserGo/infrastructure/model"
 )
 
 type UserRepository struct {
@@ -25,4 +27,15 @@ func (u UserRepository) Create(data entities.User) error {
 		return err
 	}
 	return nil
+}
+
+func (u UserRepository) Login(data entities.Login) (model.UserModel, error) {
+	var entity model.UserModel
+	result := u.db.Where("login = ? and password = ?",
+		data.Login, data.Password).
+		Find(&entity)
+	if result.RowsAffected == 0 {
+		return entity, errors.New("login or password found")
+	}
+	return entity, nil
 }

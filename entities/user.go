@@ -25,3 +25,15 @@ func (u User) ToDomain(data request.User) User {
 		Cellphone: data.Cellphone,
 	}
 }
+
+type Login struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+func (l Login) ToDomain(data request.Login) Login {
+	return Login{
+		Login:    data.Login,
+		Password: data.Password,
+	}
+}
