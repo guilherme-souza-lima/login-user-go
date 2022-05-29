@@ -9,6 +9,7 @@ import (
 type UserService interface {
 	Create(data request.User) error
 	Login(data request.Login) (response.UserLogin, error)
+	Verify(data request.Verify) (bool, error)
 }
 
 type UserHandler struct {
@@ -42,6 +43,21 @@ func (u UserHandler) LoginUser(c *fiber.Ctx) error {
 	result, err := u.UserService.Login(user)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON("Error: " + err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+func (u UserHandler) VerifyUser(c *fiber.Ctx) error {
+	userID := c.Params("user_id")
+	var verify request.Verify
+	if err := c.BodyParser(&verify); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON("Error body parser request. Error: " + err.Error())
+	}
+	verify.ID = userID
+	result, err := u.UserService.Verify(verify)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(result)

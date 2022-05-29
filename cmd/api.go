@@ -31,6 +31,7 @@ func StartHttp(ctx context.Context, containerDI *infrastructure.ContainerDI) {
 		AllowHeaders: "*",
 	}))
 
+	app.Get("/verify/:user_id", containerDI.UserHandler.VerifyUser)
 	app.Post("/user", containerDI.UserHandler.CreateUser)
 	app.Post("/login", containerDI.UserHandler.LoginUser)
 	err := app.Listen(":8080")

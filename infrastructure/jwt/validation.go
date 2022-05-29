@@ -32,8 +32,8 @@ func (t TokenJwt) Create(id, name, login, email, cellphone string) (string, erro
 	return tokenString, nil
 }
 
-func (t TokenJwt) Validation(tokenString string) (interface{}, error) {
-	var client interface{}
+func (t TokenJwt) Validation(tokenString string) (entities.Token, error) {
+	var client entities.Token
 	mySigningKey := []byte(t.AccessSecret)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

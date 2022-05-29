@@ -14,6 +14,7 @@ type UserRepository interface {
 
 type JwtToken interface {
 	Create(id, name, login, email, cellphone string) (string, error)
+	Validation(tokenString string) (entities.Token, error)
 }
 
 type CryptoPassword interface {
@@ -69,4 +70,16 @@ func (u UserService) Login(data request.Login) (response.UserLogin, error) {
 	}
 	login.Token = token
 	return login, nil
+}
+
+func (u UserService) Verify(data request.Verify) (bool, error) {
+	result, err := u.JwtToken.Validation(data.Token)
+	if err != nil {
+		return false, err
+	}
+	if data.ID == result.ID && data.Login == result.Login && data.Name == result.Name &&
+		data.Email == result.Email && data.Cellphone == result.Cellphone {
+		return true, nil
+	}
+	return false, nil
 }
