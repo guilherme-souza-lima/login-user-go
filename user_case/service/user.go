@@ -62,7 +62,7 @@ func (u UserService) Login(data request.Login) (response.UserLogin, error) {
 	login.Login = user.Login
 	login.Email = user.Email
 	login.Name = user.Name
-	login.Cellphone = user.Password
+	login.Cellphone = user.Cellphone
 	token, errToken := u.JwtToken.Create(login.ID, login.Name, login.Login, login.Email, login.Cellphone)
 	if err != nil {
 		return login, errToken
