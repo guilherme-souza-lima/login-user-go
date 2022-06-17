@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
+	"loginUserGo/entities"
 )
 
 type CryptoPassword struct {
@@ -15,13 +16,13 @@ func NewCryptoPassword(Key string) CryptoPassword {
 }
 
 func (c CryptoPassword) Encrypt(password string) (string, error) {
-	key := []byte("blogPostGeekHunterblogPostGeekHu")
+	key := []byte(entities.PASSWORD_CRYPTO)
 	plaintext := []byte(password)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
 	}
-	nonce := []byte("blogPostGeek")
+	nonce := []byte(entities.NONCE_CRYPTO)
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return "", err
@@ -32,9 +33,9 @@ func (c CryptoPassword) Encrypt(password string) (string, error) {
 }
 
 func (c CryptoPassword) Decrypt(crypt string) (string, error) {
-	key := []byte("blogPostGeekHunterblogPostGeekHu")
+	key := []byte(entities.PASSWORD_CRYPTO)
 	ciphertext, _ := hex.DecodeString(crypt)
-	nonce := []byte("blogPostGeek")
+	nonce := []byte(entities.NONCE_CRYPTO)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err

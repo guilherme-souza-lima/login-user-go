@@ -2,7 +2,7 @@ version: "3"
 services:
   postgres:
     image: postgres
-    container_name: db_postgres
+    container_name: db_postgres_account
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin

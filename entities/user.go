@@ -12,6 +12,7 @@ type User struct {
 	Password  string `json:"password"`
 	Email     string `json:"email"`
 	Cellphone string `json:"cellphone"`
+	Nick      string `json:"nick"`
 }
 
 func (u User) ToDomain(data request.User) User {
@@ -22,6 +23,7 @@ func (u User) ToDomain(data request.User) User {
 		Login:     data.Login,
 		Email:     data.Email,
 		Cellphone: data.Cellphone,
+		Nick:      data.Nick,
 	}
 }
 

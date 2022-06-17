@@ -7,6 +7,7 @@ type UserModel struct {
 	Password  string `gorm:"column:password"`
 	Email     string `gorm:"unique"`
 	Cellphone string `gorm:"unique"`
+	Nick      string `gorm:"column:nick"`
 }
 
 func (ref *UserModel) TableName() string {
